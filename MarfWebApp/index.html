@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+    <title>MARF Web-App</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+        crossorigin="anonymous"
+    >
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+
+
+
+</head>
+
+<body>
+    <div class="flex-container">
+        <div class="section-center">
+            <div class="tabs">
+                <div class="btn-container">
+                    <button
+                        class="button live"
+                        data-id="step1"
+                    >Asociatie noua</button>
+                    <button
+                        class="button"
+                        data-id="step2"
+                    >Raport de necesitate</button>
+                    <button
+                        class="button"
+                        data-id="step3"
+                    >Empty</button>
+                </div>
+                <div class="tabs-content">
+                    <div
+                        class="content live"
+                        id="step1"
+                    >
+                        <header>
+
+                        </header>
+                        <form class="asoc-input">
+                            <div class="row">
+                                <div class="col-lg-6 col-12">
+                                    <div class="asoc-name my-3">
+                                        <label
+                                            for="name"
+                                            class="form-label"
+                                        >Nume Asociatie<span>*</span></label>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            id="name"
+                                            title="Nume Asociatie"
+                                            class="form-control"
+                                            required
+                                        >
+                                    </div>
+
+                                    <fieldset class="border p-2 border-black">
+                                        <legend class="fs-6 fw-bold">Adresa asociatie:</legend>
+                                        <label
+                                            for="street"
+                                            class="form-label"
+                                        >Strada<span>*</span></label>
+                                        <input
+                                            type="text"
+                                            name="street"
+                                            id="street"
+                                            title="Strada"
+                                            class="form-control"
+                                            required
+                                        >
+
+                                        <label
+                                            for="nr"
+                                            class="form-label"
+                                        >Nr<span>*</span></label>
+                                        <input
+                                            type="text"
+                                            name="nr"
+                                            id="nr"
+                                            title="Nr"
+                                            class="form-control"
+                                            required
+                                        >
+                                        <label
+                                            for="bloc"
+                                            class="form-label"
+                                        >Bloc<span>*</span></label>
+                                        <input
+                                            type="text"
+                                            name="bloc"
+                                            id="bloc"
+                                            title="Bloc"
+                                            class="form-control"
+                                            required
+                                        >
+
+                                        <label
+                                            for="localitate"
+                                            class="form-label"
+                                        >Localitate<span>*</span></label>
+                                        <input
+                                            type="text"
+                                            name="localitate"
+                                            id="localitate"
+                                            title="Localitate"
+                                            class="form-control"
+                                            required
+                                        >
+                                        <label
+                                            for="judet"
+                                            class="form-label"
+                                        >Judet/Sector<span>*</span></label>
+                                        <input
+                                            type="text"
+                                            name="judet"
+                                            id="judet"
+                                            title="Judet"
+                                            class="form-control"
+                                            required
+                                        >
+                                    </fieldset>
+                                </div>
+
+                                <div class="col-lg-6 col-12">
+                                    <div class="asoc-cif mb-3">
+                                        <label
+                                            for="cif"
+                                            class="form-label"
+                                        >C.I.F.<span>*</span></label>
+                                        <input
+                                            type="text"
+                                            name="cif"
+                                            id="cif"
+                                            title="Presedinte Asociatie"
+                                            class="form-control"
+                                        >
+                                    </div>
+
+                                    <div class="asoc-pres mb-3">
+                                        <label
+                                            for="president"
+                                            class="form-label"
+                                        >Nume Presedinte</label>
+                                        <input
+                                            type="text"
+                                            name="president"
+                                            id="president"
+                                            title="Presedinte Asociatie"
+                                            class="form-control"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-cta d-flex justify-content-center mt-3">
+                                <button class="btn btn-primary">Adauga Asociatie</button>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div
+                        class="content"
+                        id="step2"
+                    >
+                        <form>
+                            <fieldset class="border p-2 border-black ">
+                                <legend class="fs-6 fw-bold">Raport de necesitate</legend>
+                                <div>
+                                    <label
+                                        for="prop-asoc"
+                                        class="form-label"
+                                    >Asocitatie:</label>
+                                    <select
+                                        name="prop-asoc"
+                                        id="prop-asoc"
+                                        class="form-control"
+                                    >
+
+                                    </select>
+                                </div>
+                                <div>
+                                    <label
+                                        for="subsemnatul"
+                                        class="form-label"
+                                    >Asocitatie:</label>
+                                    <select
+                                        name="subsemnatul"
+                                        id="subsemnatul"
+                                        class="form-control"
+                                    >
+                                        <option value="Marin Florin">Marin Florin</option>
+                                        <option value="Lucian Tudor">Lucian Tudor</option>
+                                    </select>
+                                </div>
+
+                                <div class="product-container">
+                                    <label
+                                        for="product"
+                                        class="form-label"
+                                    >
+                                        Produs / Serviciu
+                                        <button class="add-product">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="product"
+                                        class="form-control"
+                                        maxlength="71"
+                                    >
+
+                                </div>
+
+                                <div>
+                                    <label
+                                        for="value"
+                                        class="form-label"
+                                    >Valoare achizitii:</label>
+                                    <input
+                                        type="number"
+                                        name="value"
+                                        id="value"
+                                        title="Costul aproximativ al achizitiilor"
+                                        class="form-control"
+                                    >
+                                </div>
+
+                                <div>
+                                    <label
+                                        for="date"
+                                        class="form-label"
+                                    >Data:</label>
+                                    <input
+                                        type="date"
+                                        id="date"
+                                        name="date"
+                                        class="form-control"
+                                    >
+                                </div>
+                                <div class="file-container">
+                                    <label for="uploadedFile" class="form-label">
+                                        Încarcă fișier
+                                        <button class="add-file">
+                                         <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                    </label>
+                                    <input type="file" name="uploadedFile" id="uploadedFile" class="form-control">
+                                </div>
+
+                            </fieldset>
+                            <div class="form-cta d-flex justify-content-center mt-3">
+                                <button
+                                    type="button"
+                                    id="exportPdf"
+                                    class="btn btn-primary"
+                                >Export PDF</button>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div
+                        class="content"
+                        id="step3"
+                    >
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="add-new-product.js"></script>
+    <script src="populateSelect.js"></script>
+    <script src="script2.js"></script>
+    <script src="export-to-pdf.js"></script>
+</body>
+
+</html>

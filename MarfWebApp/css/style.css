@@ -1,0 +1,106 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background-color: #222831;
+  color: #eeeeee;
+}
+label span {
+  color: red;
+}
+
+.input-cex {
+  display: flex;
+  gap: 10px;
+}
+
+.add-cex {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border: none;
+  text-align: center;
+}
+
+.add-product {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  justify-content: end;
+  flex-direction: row;
+}
+
+.section-center {
+  width: 90vw;
+  margin: 0 auto;
+  max-width: 1170px;
+  min-width: 340px;
+  padding: 5rem 0;
+}
+
+.tabs {
+  background-color: #2596be;
+  border-radius: 0.5rem;
+  grid-template-rows: auto 1fr;
+}
+
+.button {
+  padding: 1rem 0;
+  border: none;
+  font-size: 1rem;
+  background-color: #393e46;
+  cursor: pointer;
+  transition: all 0.3s linear;
+  letter-spacing: 0.25rem;
+  color: white;
+}
+
+.btn-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.button:nth-child(1) {
+  border-top-left-radius: 0.5rem;
+}
+
+.button:nth-child(3) {
+  border-top-right-radius: 0.5rem;
+}
+
+.button:hover:not(.live) {
+  background-color: #eeeeee;
+  color: #2596be;
+}
+
+.tabs-content {
+  padding: 2rem 1.5rem;
+}
+
+@media (min-width: 992px) {
+  .image {
+    margin-bottom: 0;
+  }
+
+  .section-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.content {
+  display: none;
+}
+
+.content.live {
+  display: block;
+}
+
+.button.live {
+  background-color: #2596be;
+}
