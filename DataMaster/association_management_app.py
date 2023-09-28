@@ -7,30 +7,72 @@ import os
 import pygetwindow as gw
 import re
 
+def initialize_association_files():
+    for assoc in associations:
+        json_file_path = os.path.join("json", f"{assoc}_months.json")
+        
+        # Dacă fișierul nu există, îl creăm cu valori inițiale
+        if not os.path.exists(json_file_path):
+            initial_data = [datetime.datetime.now().strftime("%B %Y")]
+            save_to_json(f"{assoc}_months.json", initial_data)
+
+
 
 def export_association_status():
     import pandas as pd
+    from openpyxl import load_workbook
+    from openpyxl.utils import get_column_letter
 
-    df = pd.DataFrame(columns=["Asociatie", "Status"])
+    # Initialize DataFrame with a large number of columns for status
+    max_columns = 20  # Assuming a maximum of 20 unchecked items
+    columns = ["Asociatie"] + [f"Status_{i+1}" for i in range(max_columns)]
+    df = pd.DataFrame(columns=columns)
 
     for assoc in associations:
         month_list = load_from_json(f"{assoc}_months.json") or []
+        suppliers = load_from_json(f"{assoc}_{month_list[-1] if month_list else 'N/A'}_suppliers") or {}
+        notes = load_from_json(f"{assoc}_{month_list[-1] if month_list else 'N/A'}_notes.json") or {}
+        
+        items = {**suppliers, **notes}  # Combining suppliers and notes
+
+        row_data = {"Asociatie": assoc}
         if month_list:
             last_month = month_list[-1]
-            suppliers = load_from_json(f"{assoc}_{last_month}_suppliers") or {}
-            
-            print(f"Debug: Asociatie = {assoc}, Ultima luna = {last_month}, Furnizori = {suppliers}")
-            
-            if all(suppliers.values()):
-                status = "Se poate închide luna"
+
+            if all(items.values()):
+                row_data["Status_1"] = "Se poate închide luna"
             else:
-                unbifated = [k for k, v in suppliers.items() if not v]
-                status = f"Casute nebifate: {', '.join(unbifated)}"
+                unbifated = [f"{k} (F)" if k in suppliers else f"{k} (N)" for k, v in items.items() if not v]
+                for i, item in enumerate(unbifated):
+                    row_data[f"Status_{i+1}"] = item
 
-            new_row = pd.DataFrame([{"Asociatie": assoc, "Status": status}])
-            df = pd.concat([df, new_row], ignore_index=True)
+        else:
+            row_data["Status_1"] = "Nicio luna disponibila"
 
-    df.to_excel("Status_Asociatii.xlsx", index=False)
+        df = pd.concat([df, pd.DataFrame([row_data])], ignore_index=True, sort=False)
+
+    # Save DataFrame to an Excel file
+    excel_path = "Status_Asociatii.xlsx"
+    df.to_excel(excel_path, index=False)
+
+    # Open the Excel file to adjust the column widths
+    wb = load_workbook(excel_path)
+    ws = wb.active  # Get the active sheet
+
+    for col in ws.columns:
+        max_length = 0
+        column = col[0].column  # Get the column name
+        for cell in col:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(cell.value)
+            except:
+                pass
+        adjusted_width = (max_length + 2)
+        ws.column_dimensions[get_column_letter(column)].width = adjusted_width
+
+    wb.save(excel_path)
+
 
 
 def get_open_association():
@@ -242,6 +284,36 @@ def save_checkboxes():
     save_to_json(f"{selected_association.get()}_{selected_month.get()}_suppliers", suppliers)
     save_to_json(f"{selected_association.get()}_{selected_month.get()}_notes.json", notes)
 
+def delete_note():
+    delete_window = tk.Toplevel(root)
+    delete_window.title("Șterge Notiță")
+
+    notes = load_from_json(f"{selected_association.get()}_{selected_month.get()}_notes.json") or {}
+    
+    # Lista pentru a ține notițele selectate pentru ștergere
+    selected_notes = []
+    
+    for note in notes.keys():
+        var = tk.BooleanVar()
+        cb = tk.Checkbutton(delete_window, text=note, variable=var)
+        cb.var = var
+        cb.pack()
+        
+        selected_notes.append((note, var))
+    
+    # Buton pentru a confirma ștergerea
+    tk.Button(delete_window, text="Șterge", command=lambda: confirm_delete_notes(selected_notes)).pack()
+
+def confirm_delete_notes(selected_notes):
+    notes = load_from_json(f"{selected_association.get()}_{selected_month.get()}_notes.json") or {}
+    
+    for note, var in selected_notes:
+        if var.get():
+            del notes[note]
+    
+    save_to_json(f"{selected_association.get()}_{selected_month.get()}_notes.json", notes)
+    refresh_notes()
+
 def update_button_states():
     is_month_closed = selected_month.get() in closed_months.get(selected_association.get(), [])
     state = tk.DISABLED if is_month_closed else tk.NORMAL
@@ -250,6 +322,7 @@ def update_button_states():
     save_button["state"] = state
     close_month_button["state"] = state
     delete_supplier_button["state"] = state
+    delete_note_button["state"] = state
 
 def delete_supplier():
     delete_window = tk.Toplevel(root)
@@ -271,6 +344,9 @@ def delete_supplier():
     # Buton pentru a confirma ștergerea
     tk.Button(delete_window, text="Șterge", command=lambda: confirm_delete(selected_suppliers)).pack()
 
+
+
+
 root = tk.Tk()
 root.title("Data Master v1.02")
 root.geometry("1200x800")
@@ -281,6 +357,7 @@ left_frame.pack_propagate(0)
 left_frame.config(width=250)
 
 associations = load_from_json("associations.json") or []
+initialize_association_files()
 selected_association = tk.StringVar()
 if associations:
     selected_association.set(associations[0])
@@ -312,15 +389,18 @@ suppliers_label.pack(pady=10)
 button_frame = tk.Frame(right_frame, bg='#52817F')
 button_frame.pack(pady=5)
 
-delete_supplier_button = tk.Button(button_frame, text="Șterge Furnizor", command=delete_supplier)
-delete_supplier_button.pack(side=tk.RIGHT, padx=5)
-
-
 add_supplier_button = tk.Button(button_frame, text="Adauga furnizor", command=add_supplier)
-add_supplier_button.pack(side=tk.LEFT, padx=5)
+add_supplier_button.grid(row=0, column=0, padx=5)
 
 add_note_button = tk.Button(button_frame, text="Adauga notita", command=add_note)
-add_note_button.pack(side=tk.LEFT, padx=5)
+add_note_button.grid(row=0, column=1, padx=5)
+
+delete_supplier_button = tk.Button(button_frame, text="Șterge Furnizor", command=delete_supplier)
+delete_supplier_button.grid(row=1, column=0, padx=5, pady=5)
+
+delete_note_button = tk.Button(button_frame, text="Șterge Notiță", command=delete_note)
+delete_note_button.grid(row=1, column=1, padx=5, pady=5)
+
 
 items_frame = tk.Frame(right_frame, bg='white')
 items_frame.pack(fill=tk.BOTH, expand=1)
